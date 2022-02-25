@@ -11,6 +11,7 @@ import time
 import sys
 
 import algorithm
+import load_data
 
 # HOST = "127.0.0.1"
 # PORT = 6666
@@ -60,7 +61,8 @@ def deal_data(conn, addr):
             break
         chess_board_string = data.decode()
         current_matrix, which_turn = algorithm.string2matrix(str(chess_board_string))
-        backMsg_example = "1,4041"
+        step = load_data.ChessStep(1, 4, 0, 4, 1)
+        backMsg_example = step.generate_msg()
         backMsg = bytes(backMsg_example.encode("UTF-8"))
         conn.send(backMsg)
         # conn.send(bytes(backMsg, "UTF-8"))

@@ -62,6 +62,30 @@ def int2cn(index):
     return CHESS_CN[index]
 
 
+class ChessStep:
+    def __init__(self, chess_num, pos_x, pos_y, tar_x, tar_y, kill = False, kill_num = 0):
+        self.chess_num = chess_num
+        self.pos_x = pos_x
+        self.pos_y = pos_y
+        self.tar_x = tar_x
+        self.tar_y = tar_y
+        self.kill = kill
+        self.kill_num = kill_num
+
+    def generate_msg(self):
+        msg = str(self.chess_num) + "," + \
+              str(self.pos_x) + str(self.pos_y) + str(self.tar_x) + str(self.tar_y)
+        if self.kill:
+            msg += "1" + "," + str(self.kill_num)
+        else:
+            msg += "0,0"
+        return msg
+
+
+if __name__ == '__main__':
+    step = ChessStep(1, 4, 0, 4, 1)
+    print(step.generate_msg())
+
 # def docuChessInfo(pathChessChoose):
 #     # environment
 #     print("tensorflow->", tf.__version__)
