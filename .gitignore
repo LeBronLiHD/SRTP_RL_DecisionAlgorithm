@@ -9,6 +9,7 @@ __pycache__/
 # L
 .dist/
 .idea/
+rl_models/
 
 # Distribution / packaging
 .Python
