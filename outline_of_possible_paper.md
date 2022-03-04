@@ -30,7 +30,13 @@
 
 ### ideas about Chinese-chess AI
 
+- Without human knowledge, the AI becomes its own teacher, training a neural network through fully autonomous reinforcement learning to select moves. 
+- Each iteration results in higher quality move selection and stronger self-play. 
+- Ultimately achieve the goal of surpassing human players.
+
 ### difference between current algorithms
+
+- besic data structure
 
 ### achievements and evaluation
 
