@@ -1,8 +1,6 @@
 # SRTP_RL_DecisionAlgorithm
 
-&copy; SUN Zhengnan, SHEN Yipeng, LI Haodong
-
-Using Reinforcement Learning for Decision Making of Chinese Chess Games
+- Using Reinforcement Learning for Decision Making of Chinese Chess Games
 
 | filename| function|
 |:----:|:----:|
