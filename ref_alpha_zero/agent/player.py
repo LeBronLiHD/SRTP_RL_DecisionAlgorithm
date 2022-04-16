@@ -5,9 +5,9 @@ from threading import Lock, Condition
 import concurrent.futures.thread
 
 import numpy as np
-import cchess_alphazero.environment.static_env as senv
-from cchess_alphazero.config import Config
-from cchess_alphazero.environment.lookup_tables import Winner, ActionLabelsRed, flip_move
+import ref_alpha_zero.environment.static_env as senv
+from ref_alpha_zero.config import Config
+from ref_alpha_zero.environment.lookup_tables import Winner, ActionLabelsRed, flip_move
 from time import time, sleep
 import gc 
 import sys

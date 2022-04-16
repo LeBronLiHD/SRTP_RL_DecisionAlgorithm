@@ -3,8 +3,8 @@ import multiprocessing as mp
 
 from logging import getLogger
 
-from cchess_alphazero.lib.logger import setup_logger
-from cchess_alphazero.config import Config, PlayWithHumanConfig
+from ref_alpha_zero.lib.logger import setup_logger
+from ref_alpha_zero.config import Config, PlayWithHumanConfig
 
 logger = getLogger(__name__)
 
@@ -71,21 +71,21 @@ def start():
 
     if args.cmd == 'self':
         if args.ucci:
-            import cchess_alphazero.worker.play_with_ucci_engine as self_play
+            import ref_alpha_zero.worker.play_with_ucci_engine as self_play
         else:
             if mp.get_start_method() == 'spawn':
-                import cchess_alphazero.worker.self_play_windows as self_play
+                import ref_alpha_zero.worker.self_play_windows as self_play
             else:
-                from cchess_alphazero.worker import self_play
+                from ref_alpha_zero.worker import self_play
         return self_play.start(config)
     elif args.cmd == 'opt':
-        from cchess_alphazero.worker import optimize
+        from ref_alpha_zero.worker import optimize
         return optimize.start(config)
     elif args.cmd == 'play':
         if args.cli:
-            import cchess_alphazero.play_games.play_cli as play
+            import ref_alpha_zero.play_games.play_cli as play
         else:
-            from cchess_alphazero.play_games import play
+            from ref_alpha_zero.play_games import play
         config.opts.light = False
         pwhc = PlayWithHumanConfig()
         pwhc.update_play_config(config.play)
@@ -93,24 +93,24 @@ def start():
         play.start(config, not args.ai_move_first)
     elif args.cmd == 'eval':
         if args.elo == False:
-            from cchess_alphazero.worker import evaluator
+            from ref_alpha_zero.worker import evaluator
         else:
             if mp.get_start_method() == 'spawn':
-                import cchess_alphazero.worker.compute_elo_windows as evaluator
+                import ref_alpha_zero.worker.compute_elo_windows as evaluator
             else:
-                import cchess_alphazero.worker.compute_elo as evaluator
+                import ref_alpha_zero.worker.compute_elo as evaluator
         config.eval.update_play_config(config.play)
         evaluator.start(config)
     elif args.cmd == 'sl':
         if args.onegreen:
-            import cchess_alphazero.worker.sl_onegreen as sl
+            import ref_alpha_zero.worker.sl_onegreen as sl
             sl.start(config, args.skip)
         else:
-            from cchess_alphazero.worker import sl
+            from ref_alpha_zero.worker import sl
             sl.start(config)
         
     elif args.cmd == 'ob':
-        from cchess_alphazero.play_games import ob_self_play
+        from ref_alpha_zero.play_games import ob_self_play
         pwhc = PlayWithHumanConfig()
         pwhc.update_play_config(config.play)
         ob_self_play.start(config, args.ucci, args.ai_move_first)

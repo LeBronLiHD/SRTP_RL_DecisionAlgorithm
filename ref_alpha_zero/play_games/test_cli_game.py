@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-from cchess_alphazero.environment.chessboard import Chessboard
+from ref_alpha_zero.environment.chessboard import Chessboard
 
 def print_chessman_name(chessman):
     if chessman:

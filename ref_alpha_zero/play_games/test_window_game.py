@@ -5,8 +5,8 @@ import pygame
 import random
 import os.path
 
-from cchess_alphazero.environment.chessboard import Chessboard
-from cchess_alphazero.environment.chessman import *
+from ref_alpha_zero.environment.chessboard import Chessboard
+from ref_alpha_zero.environment.chessman import *
 from pygame.locals import *
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]

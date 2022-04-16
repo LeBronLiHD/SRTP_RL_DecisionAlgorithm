@@ -20,7 +20,7 @@ class Config:
         elif config_type == "normal":
             import configs.normal as c
         elif config_type == 'distribute':
-            import cchess_alphazero.configs.distribute as c
+            import ref_alpha_zero.configs.distribute as c
         else:
             raise RuntimeError('unknown config_type: %s' % (config_type))
         self.model = c.ModelConfig()
@@ -65,7 +65,7 @@ class ResourceConfig:
         self.sl_data_move = os.path.join(self.sl_data_dir, "moves.csv")
         self.sl_onegreen = os.path.join(self.sl_data_dir, "onegreen.json")
 
-        self.font_path = os.path.join(self.project_dir, 'cchess_alphazero', 'play_games', 'PingFang.ttc')
+        self.font_path = os.path.join(self.project_dir, 'ref_alpha_zero', 'play_games', 'PingFang.ttc')
 
     def create_directories(self):
         dirs = [self.project_dir, self.data_dir, self.model_dir, self.play_data_dir, self.log_dir,

@@ -5,9 +5,9 @@ import os
 import numpy as np
 import shutil
 
-from cchess_alphazero.config import Config
-from cchess_alphazero.lib.model_helper import load_best_model_weight, need_to_reload_best_model_weight
-from cchess_alphazero.lib.web_helper import http_request, download_file
+from ref_alpha_zero.config import Config
+from ref_alpha_zero.lib.model_helper import load_best_model_weight, need_to_reload_best_model_weight
+from ref_alpha_zero.lib.web_helper import http_request, download_file
 from time import time
 from logging import getLogger
 

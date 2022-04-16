@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from cchess_alphazero.environment.light_env.common import *
-from cchess_alphazero.environment.lookup_tables import Winner
+from ref_alpha_zero.environment.light_env.common import *
+from ref_alpha_zero.environment.lookup_tables import Winner
 
 class L_Chessboard:
 

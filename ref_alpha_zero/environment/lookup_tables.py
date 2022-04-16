@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 
-from cchess_alphazero.environment.chessman import *
+from ref_alpha_zero.environment.chessman import *
 from enum import Enum
 import numpy as np
 

@@ -2,9 +2,9 @@ import enum
 import numpy as np
 import copy
 
-from cchess_alphazero.environment.chessboard import Chessboard
-from cchess_alphazero.environment.lookup_tables import Chessman_2_idx, Fen_2_Idx, Winner
-from cchess_alphazero.environment.light_env.chessboard import L_Chessboard
+from ref_alpha_zero.environment.chessboard import Chessboard
+from ref_alpha_zero.environment.lookup_tables import Chessman_2_idx, Fen_2_Idx, Winner
+from ref_alpha_zero.environment.light_env.chessboard import L_Chessboard
 
 from logging import getLogger
 

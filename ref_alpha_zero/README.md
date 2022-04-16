@@ -1,7 +1,7 @@
 # Code Structures
 
 ```
-├── cchess_alphazero
+├── ref_alpha_zero
 │   ├── agent               : the AI (AlphaZero) agent
 │   │   ├── api.py          : neural networks' prediction api
 │   │   ├── model.py        : policy & value network model

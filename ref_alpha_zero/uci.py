@@ -15,8 +15,8 @@ _PATH_ = os.path.dirname(os.path.dirname(__file__))
 if _PATH_ not in sys.path:
     sys.path.append(_PATH_)
 
-from cchess_alphazero.config import Config, PlayWithHumanConfig
-from cchess_alphazero.lib.logger import setup_file_logger, setup_logger
+from ref_alpha_zero.config import Config, PlayWithHumanConfig
+from ref_alpha_zero.lib.logger import setup_file_logger, setup_logger
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 config_type = 'distribute'
@@ -26,12 +26,12 @@ config.resource.create_directories()
 setup_file_logger(config.resource.play_log_path)
 sys.stderr = open(config.resource.play_log_path, 'a')
 
-import cchess_alphazero.environment.static_env as senv
-from cchess_alphazero.agent.model import CChessModel
-from cchess_alphazero.agent.player import CChessPlayer, VisitState
-from cchess_alphazero.environment.lookup_tables import Winner, ActionLabelsRed, flip_move
-from cchess_alphazero.lib.model_helper import load_model_weight
-from cchess_alphazero.lib.tf_util import set_session_config
+import ref_alpha_zero.environment.static_env as senv
+from ref_alpha_zero.agent.model import CChessModel
+from ref_alpha_zero.agent.player import CChessPlayer, VisitState
+from ref_alpha_zero.environment.lookup_tables import Winner, ActionLabelsRed, flip_move
+from ref_alpha_zero.lib.model_helper import load_model_weight
+from ref_alpha_zero.lib.tf_util import set_session_config
 
 logger = getLogger(__name__)
 

@@ -10,13 +10,13 @@ from time import sleep
 from random import shuffle
 from time import time
 
-from cchess_alphazero.agent.model import CChessModel
-from cchess_alphazero.config import Config
-from cchess_alphazero.lib.data_helper import get_game_data_filenames, read_game_data_from_file
-from cchess_alphazero.lib.model_helper import load_sl_best_model_weight, save_as_sl_best_model
-from cchess_alphazero.environment.env import CChessEnv
-from cchess_alphazero.environment.lookup_tables import ActionLabelsRed, flip_policy, flip_move
-from cchess_alphazero.lib.tf_util import set_session_config
+from ref_alpha_zero.agent.model import CChessModel
+from ref_alpha_zero.config import Config
+from ref_alpha_zero.lib.data_helper import get_game_data_filenames, read_game_data_from_file
+from ref_alpha_zero.lib.model_helper import load_sl_best_model_weight, save_as_sl_best_model
+from ref_alpha_zero.environment.env import CChessEnv
+from ref_alpha_zero.environment.lookup_tables import ActionLabelsRed, flip_policy, flip_move
+from ref_alpha_zero.lib.tf_util import set_session_config
 
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard

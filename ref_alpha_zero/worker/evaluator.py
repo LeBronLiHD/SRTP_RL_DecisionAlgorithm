@@ -12,16 +12,16 @@ from multiprocessing import Lock
 from random import random, randint
 import numpy as np
 
-import cchess_alphazero.environment.static_env as senv
-from cchess_alphazero.agent.model import CChessModel
-from cchess_alphazero.agent.player import CChessPlayer, VisitState
-from cchess_alphazero.agent.api import CChessModelAPI
-from cchess_alphazero.config import Config
-from cchess_alphazero.environment.env import CChessEnv
-from cchess_alphazero.environment.lookup_tables import Winner, flip_move, ActionLabelsRed
-from cchess_alphazero.lib.data_helper import get_game_data_filenames, write_game_data_to_file
-from cchess_alphazero.lib.model_helper import load_model_weight
-from cchess_alphazero.lib.tf_util import set_session_config
+import ref_alpha_zero.environment.static_env as senv
+from ref_alpha_zero.agent.model import CChessModel
+from ref_alpha_zero.agent.player import CChessPlayer, VisitState
+from ref_alpha_zero.agent.api import CChessModelAPI
+from ref_alpha_zero.config import Config
+from ref_alpha_zero.environment.env import CChessEnv
+from ref_alpha_zero.environment.lookup_tables import Winner, flip_move, ActionLabelsRed
+from ref_alpha_zero.lib.data_helper import get_game_data_filenames, write_game_data_to_file
+from ref_alpha_zero.lib.model_helper import load_model_weight
+from ref_alpha_zero.lib.tf_util import set_session_config
 
 logger = getLogger(__name__)
 
