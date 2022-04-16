@@ -4,7 +4,7 @@ from datetime import datetime
 from glob import glob
 from logging import getLogger
 
-from cchess_alphazero.config import ResourceConfig
+from ref_alpha_zero.config import ResourceConfig
 
 logger = getLogger(__name__)
 
