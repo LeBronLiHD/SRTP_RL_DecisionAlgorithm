@@ -12,8 +12,6 @@ import global_params
 import sys
 sys.dont_write_bytecode = True
 
-norm_size = global_params.M_norm_size
-
 CHESS_TABLE = [
     "b_gen_",
     "b_adv_",
