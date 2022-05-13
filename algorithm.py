@@ -1,14 +1,14 @@
 # -*-*- coding utf-8 -*-*-
 # to hough circling and get chess image
 
-import cv2
+# import cv2
 import os
 import sys
 
 import datetime
 
 import numpy as np
-from PIL import Image
+# from PIL import Image
 
 import global_params
 import load_data
