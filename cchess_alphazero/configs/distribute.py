@@ -2,13 +2,13 @@ class EvaluateConfig:
     def __init__(self):
         self.vram_frac = 1.0
         self.game_num = 10
-        self.simulation_num_per_move = 800
+        self.simulation_num_per_move = 3200
         self.thinking_loop = 1
         self.c_puct = 1 # lower  = prefer mean action value
         self.tau_decay_rate = 0.5
         self.noise_eps = 0.1
         self.max_game_length = 200
-        self.max_processes = 10
+        self.max_processes = 16
         self.search_threads = 10
 
     def update_play_config(self, pc):
@@ -32,10 +32,10 @@ class PlayDataConfig:
 
 class PlayConfig:
     def __init__(self):
-        self.max_processes = 10     # tune this to your cpu cores
+        self.max_processes = 16     # tune this to your cpu cores
         self.search_threads = 10    # increase this will be faster but with weaker performance
         self.vram_frac = 1.0
-        self.simulation_num_per_move = 800
+        self.simulation_num_per_move = 3200
         self.thinking_loop = 1
         self.logging_thinking = False
         self.c_puct = 5
