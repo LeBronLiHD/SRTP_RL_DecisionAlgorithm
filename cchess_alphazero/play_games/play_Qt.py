@@ -1,7 +1,7 @@
 from collections import defaultdict
 from cchess_alphazero.agent.model import CChessModel
 from cchess_alphazero.agent.player import CChessPlayer, VisitState
-from cchess_alphazero.config import Config
+from cchess_alphazero.config import Config, PlayWithHumanConfig
 from cchess_alphazero.environment.lookup_tables import Winner, ActionLabelsRed, flip_move
 from cchess_alphazero.lib.model_helper import load_best_model_weight
 
@@ -32,21 +32,26 @@ fen_list = ['', 's', 'm', 'e', 'k', 'r', 'c', 'p', 'K', 'M', 'E', 'S', 'R', 'C',
 # fen_list = ['', 'K', 'M', 'E', 'S', 'R', 'C', 'P', 's', 'm', 'e', 'k', 'r', 'c', 'p']
 
 
-def action_to_move(matrix, action):
+def string_to_list(action):
     row1 = int(action[0])
     col1 = int(action[1])
     row2 = int(action[2])
     col2 = int(action[3])
-    chessman = matrix[row1][col1]
-    move = [chessman, row1, col1, row2, col2]
+    move = [row1, col1, row2, col2]
     return move
 
 
-def start_ai():
+def trans_move(move):
+    return [move[0], 9 - move[1], move[2], 9 - move[3]]
+
+
+def config_play():
     # set_session_config(per_process_gpu_memory_fraction=1, allow_growth=True, device_list=config.opts.device_list)
-    config = Config()
+    config_type = "mini"
+    config = Config(config_type=config_type)
+    pwhc = PlayWithHumanConfig()
+    pwhc.update_play_config(config.play)  # 更新play参数，替换config中默认参数
     play = PlayWithHuman(config)
-    play.start()
     return play
 
 
@@ -164,25 +169,25 @@ if __name__ == "__main__":
     matrix = matrix[:-1]
     # print('np.array(matrix).shape:', np.array(matrix).shape)
 
-    if not turn:
-        col = 10
-        for row in matrix:
-            for i in range(col // 2):
-                row[i], row[col - 1 - i] = row[col - 1 - i], row[i]
+    col = 10
+    for row in matrix:
+        for i in range(col // 2):
+            row[i], row[col - 1 - i] = row[col - 1 - i], row[i]
 
     # print('np.array(matrix).shape:', np.array(matrix).shape)
     # print('matrix:', matrix, 'turn:', turn)
 
-    play = start_ai()
+    play = config_play()
+    play.start()
+
     action = play.get_action(matrix, True)
 
-    # row1 = int(action[0])
-    # col1 = int(action[1])
-    # row2 = int(action[2])
-    # col2 = int(action[3])
-    # chessman = matrix[row1][col1]
-    # move = [chessman, row1, col1, row2, col2]
-    move = action_to_move(matrix, action)
+    move = string_to_list(action)
+    send_move = [matrix[move[0]][move[1]]]
+
+    flip_move = trans_move(move)
+    send_move.extend(flip_move)
 
     print(action)
     print(move)
+    print(send_move)

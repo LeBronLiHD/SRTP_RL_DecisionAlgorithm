@@ -26,6 +26,7 @@ HOST = "127.0.0.1"
 # HOST = "172.20.10.5"
 # HOST = "10.162.26.114"
 # HOST = "192.168.43.121"
+# HOST = "172.20.10.5"
 PORT = 9999
 global rec_move, send_move
 global last_matrix, current_matrix
@@ -72,15 +73,18 @@ def deal_data(conn, addr):
     # from cchess_alphazero import manager
     # manager.start()
 
-    ai_move_first = False
-    human_move_first = True
+    # ai_move_first = False
+    # human_move_first = True
     config_type = "mini"
     config = Config(config_type=config_type)
     config.opts.light = False
     pwhc = PlayWithHumanConfig()
-    pwhc.update_play_config(config.play)  # 更新play参数，替换config中默认参数
-    logger.info(f"AI move first : {ai_move_first}")
-    play = PlayWithHuman(config)
+    pwhc.update_play_config(config.play)
+    # logger.info(f"AI move first : {ai_move_first}")
+
+    play_r = PlayWithHuman(config)
+    play_b = PlayWithHuman(config)
+
     last_exist = False
     last_chess_board_string = None
 
@@ -127,7 +131,8 @@ def deal_data(conn, addr):
             print("game start")
             set_session_config(per_process_gpu_memory_fraction=1, allow_growth=True,
                                device_list=config.opts.device_list)
-            play.play_start(human_move_first)
+            play_r.play_start(human_first=False)
+            play_b.play_start(human_first=True)
 
             current_matrix, red_turn = algorithm.string2matrix(str(chess_board_string))
             last_exist = True
@@ -137,16 +142,33 @@ def deal_data(conn, addr):
 
             print("Initialized")
 
-            print(
-                "\n==================================\n" + "SHENYIPENG NB " + chess_board_string + "\n===========================================\n")
-            backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
-            conn.send(backMsg)
+            action = play_r.ai_step()
+            move = string_to_list(action)
+            flip_move = trans_move(move)
+            send_move = [current_matrix[flip_move[0]][flip_move[1]]]
+            send_move.extend(flip_move)
+            print("send_move", send_move)
+
+            print("will_send_move")
+            # step = load_data.ChessStep(0, 1, 2, 3, 4)
+            step = load_data.ChessStep(send_move[0], send_move[1], send_move[2], send_move[3], send_move[4])
+            backMsg_example = step.generate_msg()
+            print("backMsg_example ", backMsg_example)
+            backMsg = bytes(backMsg_example.encode("UTF-8"))
+            # conn.send(backMsg)
+            print("conn.send(backMsg)", conn.send(backMsg))
+            print("\n==================================\n" + "send_move", send_move,
+                  chess_board_string + "\n===========================================\n")
             continue
 
         if chess_board_string == "stop":
-            play.ai.close()
+            play_r.ai.close()
             # print(f"胜者是 is {play.env.board.winner} !!!")
-            play.env.board.print_record()
+            play_r.env.board.print_record()
+
+            play_b.ai.close()
+            # print(f"胜者是 is {play.env.board.winner} !!!")
+            play_b.env.board.print_record()
 
             print(
                 "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
@@ -170,12 +192,12 @@ def deal_data(conn, addr):
             rec_move = trans_move(rec_move)
             print("rec_move", rec_move)
 
-            if play.env.red_to_move:
-                play.human_step(rec_move)
-                if play.env.board.is_end():
-                    play.ai.close()
-                    print(f"胜者是 is {play.env.board.winner} !!!")
-                    play.env.board.print_record()
+            if play_b.env.red_to_move:
+                play_b.human_step(rec_move)
+                if play_b.env.board.is_end():
+                    play_b.ai.close()
+                    print(f"胜者是 is {play_b.env.board.winner} !!!")
+                    play_b.env.board.print_record()
 
                     print(
                         "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
@@ -183,24 +205,56 @@ def deal_data(conn, addr):
                     conn.send(backMsg)
                     continue
 
-            if not play.env.red_to_move:
-                action = play.ai_step()
+            if not play_b.env.red_to_move:
+                action = play_b.ai_step()
                 move = string_to_list(action)
                 flip_move = trans_move(move)
                 send_move = [current_matrix[flip_move[0]][flip_move[1]]]
                 send_move.extend(flip_move)
                 print("send_move", send_move)
-        else:
+
+        elif last_exist and red_turn:
+            rec_move = matrix_to_move(np.array(last_matrix), np.array(current_matrix))
+            print("ori_rec_move", rec_move)
+            rec_move = trans_move(rec_move)
+            print("rec_move", rec_move)
+
+            if not play_r.env.red_to_move:
+                play_r.human_step(rec_move)
+                if play_r.env.board.is_end():
+                    play_r.ai.close()
+                    print(f"胜者是 is {play_r.env.board.winner} !!!")
+                    play_r.env.board.print_record()
+
+                    print(
+                        "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
+                    backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
+                    conn.send(backMsg)
+                    continue
+
+            if play_r.env.red_to_move:
+                action = play_r.ai_step()
+                move = string_to_list(action)
+                flip_move = trans_move(move)
+                send_move = [current_matrix[flip_move[0]][flip_move[1]]]
+                send_move.extend(flip_move)
+                print("send_move", send_move)
+
+        if play_r.env.board.is_end():
+            play_r.ai.close()
+            print(f"胜者是 is {play_r.env.board.winner} !!!")
+            play_r.env.board.print_record()
+
             print(
                 "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
             backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
             conn.send(backMsg)
             continue
 
-        if play.env.board.is_end():
-            play.ai.close()
-            print(f"胜者是 is {play.env.board.winner} !!!")
-            play.env.board.print_record()
+        if play_b.env.board.is_end():
+            play_b.ai.close()
+            print(f"胜者是 is {play_b.env.board.winner} !!!")
+            play_b.env.board.print_record()
 
             print(
                 "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")

@@ -17,7 +17,7 @@ from logging import getLogger
 from matrix_to_move import matrix_to_move
 from cchess_alphazero.lib.tf_util import set_session_config
 from cchess_alphazero.config import Config, PlayWithHumanConfig
-from cchess_alphazero.play_games.play_Qt_current import PlayWithHuman, string_to_list, trans_move
+from cchess_alphazero.play_games.play_Qt import config_play, string_to_list, trans_move
 
 logger = getLogger(__name__)
 
@@ -72,16 +72,8 @@ def deal_data(conn, addr):
     # from cchess_alphazero import manager
     # manager.start()
 
-    ai_move_first = False
-    human_move_first = True
-    config_type = "mini"
-    config = Config(config_type=config_type)
-    config.opts.light = False
-    pwhc = PlayWithHumanConfig()
-    pwhc.update_play_config(config.play)  # 更新play参数，替换config中默认参数
-    logger.info(f"AI move first : {ai_move_first}")
-    play = PlayWithHuman(config)
-    last_exist = False
+    play = config_play()
+    play.start()
     last_chess_board_string = None
 
     while True:
@@ -115,34 +107,6 @@ def deal_data(conn, addr):
             print("conn.send(backMsg)", conn.send(backMsg))
             continue
 
-        if chess_board_string[11:] == "5,00;0,01;0,02;7,03;0,04;0,05;14,06;0,07;0,08;12,09;4,10;0,11;6,12;0," \
-                                      "13;0,14;0,15;0,16;13,17;0,18;11,19;3,20;0,21;0,22;7,23;0,24;0,25;14,26;0,27;0," \
-                                      "28;10,29;2,30;0,31;0,32;0,33;0,34;0,35;0,36;0,37;0,38;9,39;1,40;0,41;0,42;7," \
-                                      "43;0," \
-                                      "44;0,45;14,46;0,47;0,48;8,49;2,50;0,51;0,52;0,53;0,54;0,55;0,56;0,57;0,58;9," \
-                                      "59;3," \
-                                      "60;0,61;0,62;7,63;0,64;0,65;14,66;0,67;0,68;10,69;4,70;0,71;6,72;0,73;0,74;0," \
-                                      "75;0," \
-                                      "76;13,77;0,78;11,79;5,80;0,81;0,82;7,83;0,84;0,85;14,86;0,87;0,88;12,89;":
-            print("game start")
-            set_session_config(per_process_gpu_memory_fraction=1, allow_growth=True,
-                               device_list=config.opts.device_list)
-            play.play_start(human_move_first)
-
-            current_matrix, red_turn = algorithm.string2matrix(str(chess_board_string))
-            last_exist = True
-
-            rec_move = [0, 0, 0, 0]
-            send_move = [0, 0, 0, 0, 0]
-
-            print("Initialized")
-
-            print(
-                "\n==================================\n" + "SHENYIPENG NB " + chess_board_string + "\n===========================================\n")
-            backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
-            conn.send(backMsg)
-            continue
-
         if chess_board_string == "stop":
             play.ai.close()
             # print(f"胜者是 is {play.env.board.winner} !!!")
@@ -154,59 +118,26 @@ def deal_data(conn, addr):
             conn.send(backMsg)
             continue
 
-        print("last_exist", last_exist)
-
-        if last_exist:
-            last_matrix = current_matrix
-
         current_matrix, red_turn = algorithm.string2matrix(str(chess_board_string))
 
-        if not last_exist:
-            last_exist = True
+        # print('matrix:', matrix, 'turn:', turn)
+        matrix = current_matrix[:-1]  # 未开辟新内存空间
+        # print('np.array(matrix).shape:', np.array(matrix).shape)
 
-        if last_exist and not red_turn:
-            rec_move = matrix_to_move(np.array(last_matrix), np.array(current_matrix))
-            print("ori_rec_move", rec_move)
-            rec_move = trans_move(rec_move)
-            print("rec_move", rec_move)
+        print("matrix: ", matrix)
+        col = 10
+        for row in matrix:
+            for i in range(col // 2):
+                row[i], row[col - 1 - i] = row[col - 1 - i], row[i]
+        print("matrix: ", matrix)
 
-            if play.env.red_to_move:
-                play.human_step(rec_move)
-                if play.env.board.is_end():
-                    play.ai.close()
-                    print(f"胜者是 is {play.env.board.winner} !!!")
-                    play.env.board.print_record()
+        action = play.get_action(matrix, red_turn)
 
-                    print(
-                        "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
-                    backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
-                    conn.send(backMsg)
-                    continue
+        move = string_to_list(action)
+        send_move = [matrix[move[0]][move[1]]]
 
-            if not play.env.red_to_move:
-                action = play.ai_step()
-                move = string_to_list(action)
-                flip_move = trans_move(move)
-                send_move = [current_matrix[flip_move[0]][flip_move[1]]]
-                send_move.extend(flip_move)
-                print("send_move", send_move)
-        else:
-            print(
-                "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
-            backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
-            conn.send(backMsg)
-            continue
-
-        if play.env.board.is_end():
-            play.ai.close()
-            print(f"胜者是 is {play.env.board.winner} !!!")
-            play.env.board.print_record()
-
-            print(
-                "\n==================================\n" + "SHENYIPENG NB" + chess_board_string + "\n===========================================\n")
-            backMsg = bytes("SHENYIPENG NB".encode("UTF-8"))
-            conn.send(backMsg)
-            continue
+        flip_move = trans_move(move)
+        send_move.extend(flip_move)
 
         print("will_send_move")
         # step = load_data.ChessStep(0, 1, 2, 3, 4)
