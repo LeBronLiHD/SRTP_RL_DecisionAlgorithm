@@ -42,7 +42,7 @@ class PlayWithHuman:
         self.load_model()
         self.pipe = self.model.get_pipes()
         self.ai = CChessPlayer(self.config, search_tree=defaultdict(VisitState), pipes=self.pipe,
-                               enable_resign=True, debugging=False)
+                               enable_resign=True, debugging=False, use_history=True)
         self.human_move_first = human_first
 
         labels = ActionLabelsRed
